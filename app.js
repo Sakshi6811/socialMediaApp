@@ -18,7 +18,7 @@ const User = require('./models/user');
 //const Post = require('./models/post');
 // Link passports to the server
 require('./passport/google-passport');
-// require('./passport/facebook-passport');
+require('./passport/facebook-passport');
 // require('./passport/instagram-passport');
 //initialize application
 const app = express();
@@ -94,6 +94,21 @@ app.get('/auth/google/callback',
 //         });
 //     });
 //  });
+// FACEBOOK AUTH ROUTE
+app.get('/auth/facebook',
+    passport.authenticate('facebook',{
+        scope: 'email'
+    }));
+
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        failureRedirect: '/'
+    }),
+    (req, res) => {
+        // Successful authentication, redirect home.
+        res.redirect('/profile');
+    });
+//Handle profile route
 app.get('/profile', (req, res) => {
     User.findById({_id: req.user._id})
     .then((user) => {
