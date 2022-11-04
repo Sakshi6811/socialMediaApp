@@ -19,7 +19,13 @@ const User = require('./models/user');
 // Link passports to the server
 require('./passport/google-passport');
 require('./passport/facebook-passport');
-// require('./passport/instagram-passport');
+require('./passport/instagram-passport');
+
+// Link helpers
+const {
+    ensureAuthentication,
+    ensureGuest
+} = require('./helpers/auth');
 //initialize application
 const app = express();
 // Express config
@@ -62,10 +68,9 @@ mongoose.connect(keys.MongoURI, {
 // set environment variable for port
 const port = process.env.PORT || 3000;
 // Handle routes
-app.get('/', (req, res) => {
+app.get('/', ensureGuest, (req, res) => {
     res.render('home'); 
 });
-
 app.get('/about', (req, res) => {
     res.render('about');
 });
@@ -108,8 +113,20 @@ app.get('/auth/facebook/callback',
         // Successful authentication, redirect home.
         res.redirect('/profile');
     });
+// HANDLE INSTAGRAM AUTH ROUTE
+app.get('/auth/instagram',
+    passport.authenticate('instagram'));
+
+app.get('/auth/instagram/callback',
+    passport.authenticate('instagram', {
+        failureRedirect: '/'
+    }),
+    (req, res) => {
+        // Successful authentication, redirect home.
+        res.redirect('/profile');
+    });
 //Handle profile route
-app.get('/profile', (req, res) => {
+app.get('/profile', ensureAuthentication, (req, res) => {
     User.findById({_id: req.user._id})
     .then((user) => {
         res.render('profile', {
@@ -117,6 +134,50 @@ app.get('/profile', (req, res) => {
         });
     });
  });
+// HANDLE ROUTE FOR ALL USERS
+app.get('/users', ensureAuthentication, (req, res) => {
+    User.find({}).then((users) => {
+        res.render('users', {
+            users:users
+        });
+    });
+}); 
+// HANDLE EMAIL POST ROUTE
+app.post('/addEmail', (req, res) => {
+    const email = req.body.email;
+    User.findById({_id: req.user._id})
+    .then((user) => {
+        user.email = email;
+        user.save()
+        .then(() => {
+            res.redirect('/profile');
+        });
+    });
+});
+// HANDLE PHONE POST ROUTE
+app.post('/addPhone', (req, res) => {
+    const phone = req.body.phone;
+    User.findById({_id: req.user._id})
+    .then((user) => {
+        user.phone = phone;
+        user.save()
+        .then(() => {
+            res.redirect('/profile');
+        });
+    });
+});
+// HANDLE LOCATION POST ROUTE
+app.post('/addLocation', (req, res) => {
+    const location = req.body.location;
+    User.findById({_id: req.user._id})
+    .then((user) => {
+        user.location = location;
+        user.save()
+        .then(() => {
+            res.redirect('/profile');
+        });
+    });
+});
 // Handle User logout route
 app.get('/logout', (req, res) => {
     req.logout();

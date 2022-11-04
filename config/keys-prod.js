@@ -4,8 +4,8 @@ module.exports = {
     GoogleClientSecret:'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',
     FacebookClientID: process.env.FACEBOOK_CLIENT_ID,
     FacebookClientSecret: process.env.FACEBOOK_CLIENT_SECRET,
-    InstagramClientID: process.env.INSTAGRAM_CLIENT_ID,
-    InstagramClientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
+    // InstagramClientID: process.env.INSTAGRAM_CLIENT_ID,
+    // InstagramClientSecret: process.env.INSTAGRAM_CLIENT_SECRET,
    
 }
 
