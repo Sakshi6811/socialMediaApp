@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-sm-4">
             <div class="card" style="width: 18rem;">
-                <img src="{{user.image}}" class="card-img-top" >
+                <img src="{{user.image}}" class="card-img-top"  align ="right">
                 <div class="card-body">
                     <h5 class="card-title">{{user.fullname}}</h5>
                     
@@ -46,6 +46,31 @@
             </form>
             {{/if}}
         </div>
+    </div>
+    <div class="container">
+        <h1>My Posts</h1>
+        {{#each posts}}
+        <div class="media">
+            <img class="mr-3 post-user-pic" src="{{user.image}}">
+            <div class="media-body">
+                <h3 class="mt-0">{{user.fullname}}</h3>
+                <h4>{{title}} <small class="red">{{status}}<i class="fa fa-globe"></i></small></h4>
+                <p>{{body}}</p>
+                <small>{{date}}</small>
+                <br>
+                <p>
+                    <a href="/editPost/{{_id}}"><i class="fa fa-pencil"></i></a>
+                    <form action="/{{_id}}?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash"></i></button>
+                    </form>
+                </p>
+            </div>
+        </div>
+        <hr>
+        {{else}}
+        <p>You do not have any posts ..</p>
+        {{/each}}
     </div>
 </div>
    
